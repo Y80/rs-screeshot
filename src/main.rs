@@ -40,6 +40,8 @@ async fn screenshot() -> Response {
 
 async fn img() -> Response {
     Response::builder()
-        .body(Body::from(read("./img.jpg").unwrap()))
+        .body(Body::from(
+            read(format!("{}/img.jpg", std::env!("PWD"))).unwrap(),
+        ))
         .unwrap()
 }
