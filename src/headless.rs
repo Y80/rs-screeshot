@@ -9,17 +9,19 @@ pub fn browse_page() -> Result<Vec<u8>, Box<dyn Error>> {
         .build()
         .unwrap();
 
-    let browser = Browser::new(launch_opts)?;
+    let browser = Browser::new(launch_opts).expect("浏览器实例化失败");
 
     let tab = browser.new_tab()?;
 
-    tab.navigate_to("https://lccl.cc")?;
+    tab.navigate_to("https://google.com")?;
 
     tab.wait_until_navigated()?;
 
-    let jpeg_data =
-        tab.capture_screenshot(Page::CaptureScreenshotFormatOption::Jpeg, None, None, true)?;
-    // Save the screenshot to disc
+    let jpeg_data = tab
+        .capture_screenshot(Page::CaptureScreenshotFormatOption::Jpeg, None, None, true)
+        .expect("截图失败");
+
+    // tab.close_target()?;
 
     Ok(jpeg_data)
 }
