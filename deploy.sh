@@ -7,6 +7,8 @@ set -e
 git reset --hard
 git pull
 
+cargo build --release
+
 # 定义可执行文件路径
 exec_path="$HOME/codes/rs-screenshot/target/release/screenshot"
 
