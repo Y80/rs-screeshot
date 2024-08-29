@@ -4,13 +4,16 @@ use std::fs::read;
 
 use axum::{body::Body, http::StatusCode, response::Response, routing::get, Router};
 
-#[shuttle_runtime::main]
-async fn main() -> shuttle_axum::ShuttleAxum {
+#[tokio::main]
+async fn main() {
     let router = Router::new()
         .route("/", get(root))
         .route("/img", get(img))
         .route("/screenshot", get(screenshot));
-    Ok(router.into())
+
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:9000").await.unwrap();
+    println!("🚀 http://localhost:9000");
+    axum::serve(listener, router).await.unwrap();
 }
 
 async fn root() -> &'static str {
