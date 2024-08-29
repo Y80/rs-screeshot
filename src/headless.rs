@@ -7,6 +7,7 @@ pub fn browse_page() -> Result<Vec<u8>, Box<dyn Error>> {
     let launch_opts = LaunchOptions::default_builder()
         .headless(true)
         .devtools(false)
+        .sandbox(false)
         // 这里宽高是 window 的，不是 view 的，注意概念区别
         .window_size(Some((1600, 1200)))
         .build()
