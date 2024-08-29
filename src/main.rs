@@ -7,25 +7,25 @@ use axum::{body::Body, http::StatusCode, response::Response, routing::get, Route
 #[shuttle_runtime::main]
 async fn main() -> shuttle_axum::ShuttleAxum {
     let router = Router::new()
-        .route("/", get(hello_world))
+        .route("/", get(root))
         .route("/img", get(img))
-        .route("/screenshot", get(root));
+        .route("/screenshot", get(screenshot));
     Ok(router.into())
 }
 
-async fn hello_world() -> &'static str {
+async fn root() -> &'static str {
     "Hello, world!"
 }
 
-async fn root() -> axum::response::Response {
+async fn screenshot() -> Response {
     match headless::browse_page() {
-        Ok(img) => axum::response::Response::builder()
+        Ok(img) => Response::builder()
             .body(Body::from(img))
-            .unwrap(),
-        Err(err) => axum::response::Response::builder()
+            .expect("build failed"),
+        Err(err) => Response::builder()
             .status(StatusCode::INTERNAL_SERVER_ERROR)
             .body(Body::from(err.to_string()))
-            .unwrap(),
+            .expect("err"),
     }
 }
 
