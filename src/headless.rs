@@ -22,7 +22,7 @@ pub fn browse_page() -> Result<Vec<u8>, Box<dyn Error>> {
 
     println!("Start navigate");
 
-    tab.navigate_to("https://12312.xasdfgoxxxogle.com")?;
+    tab.navigate_to("https://google.com")?;
 
     tab.wait_until_navigated()?;
 
