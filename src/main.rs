@@ -19,9 +19,15 @@ async fn root() -> &'static str {
 
 async fn screenshot() -> Response {
     match headless::browse_page() {
-        Ok(img) => Response::builder()
-            .body(Body::from(img))
-            .expect("build failed"),
+        Ok(img) => {
+            if let Ok(res) = Response::builder().body(Body::from(img)) {
+                return res;
+            }
+            return Response::builder()
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::from("build error"))
+                .unwrap();
+        }
         Err(err) => Response::builder()
             .status(StatusCode::INTERNAL_SERVER_ERROR)
             .body(Body::from(err.to_string()))
