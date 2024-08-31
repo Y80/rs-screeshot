@@ -5,7 +5,8 @@ edition = "2021"
 
 [dependencies]
 axum = "0.7.5"
+headless_chrome = { version = "1.0.13", features = ["fetch"] }
 shuttle-axum = "0.47.0"
 shuttle-runtime = "0.47.0"
 tokio = "1.39.3"
-headless_chrome = {git = "https://github.com/rust-headless-chrome/rust-headless-chrome", features = ["fetch"]}
+

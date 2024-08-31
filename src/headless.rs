@@ -1,7 +1,7 @@
 use headless_chrome::{protocol::cdp::Page, Browser, LaunchOptions};
 use std::error::Error;
 
-pub fn browse_page() -> Result<Vec<u8>, Box<dyn Error>> {
+pub fn browse_page(url: &str) -> Result<Vec<u8>, Box<dyn Error>> {
     println!("Enter browse_page()");
 
     let launch_opts = LaunchOptions::default_builder()
@@ -11,28 +11,24 @@ pub fn browse_page() -> Result<Vec<u8>, Box<dyn Error>> {
         .port(Some(8010))
         // 这里宽高是 window 的，不是 view 的，注意概念区别
         .window_size(Some((1600, 1200)))
-        .build()
-        .expect("build launch options failed");
+        .build()?;
 
-    println!("Start construct browse");
+    // println!("Test chrome");
+    // let output =
+    //     Command::new("/root/.local/share/headless-chrome/linux-1095492/chrome-linux/chrome")
+    //         .output()
+    //         .unwrap();
+    // println!("{}", String::from_utf8_lossy(output.stdout.borrow()));
+    // println!("{}", String::from_utf8_lossy(output.stderr.borrow()));
 
-    let browser = Browser::new(launch_opts).expect("浏览器实例化失败");
-
-    println!("Start create a tab");
+    let browser = Browser::new(launch_opts)?;
 
     let tab = browser.new_tab()?;
-
-    println!("Start navigate");
-
-    tab.navigate_to("https://12312.xasdfgoxxxogle.com")?;
-
+    tab.navigate_to(url)?;
     tab.wait_until_navigated()?;
 
-    let jpeg_data = tab
-        .capture_screenshot(Page::CaptureScreenshotFormatOption::Jpeg, None, None, true)
-        .expect("截图失败");
-
-    // tab.close_target()?;
+    let jpeg_data =
+        tab.capture_screenshot(Page::CaptureScreenshotFormatOption::Jpeg, None, None, true)?;
 
     Ok(jpeg_data)
 }

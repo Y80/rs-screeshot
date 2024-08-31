@@ -1,8 +1,7 @@
 mod headless;
 
-use std::fs::read;
-
 use axum::{body::Body, http::StatusCode, response::Response, routing::get, Router};
+use std::{collections::HashMap, fs::read};
 
 #[shuttle_runtime::main]
 async fn main() -> shuttle_axum::ShuttleAxum {
@@ -17,17 +16,16 @@ async fn root() -> &'static str {
     "Hello, world!"
 }
 
-async fn screenshot() -> Response {
-    match headless::browse_page() {
-        Ok(img) => {
-            if let Ok(res) = Response::builder().body(Body::from(img)) {
-                return res;
-            }
-            return Response::builder()
-                .status(StatusCode::INTERNAL_SERVER_ERROR)
-                .body(Body::from("build error"))
-                .unwrap();
-        }
+async fn screenshot(query: axum::extract::Query<HashMap<String, String>>) -> Response {
+    let query_url = query.get("url");
+    if query_url.is_none() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from("Query string parameters 'url' is missing."))
+            .unwrap();
+    }
+    match headless::browse_page(query_url.unwrap()) {
+        Ok(img) => Response::builder().body(Body::from(img)).unwrap(),
         Err(err) => Response::builder()
             .status(StatusCode::INTERNAL_SERVER_ERROR)
             .body(Body::from(err.to_string()))
